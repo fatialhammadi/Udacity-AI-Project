@@ -1,0 +1,25 @@
+#REMOVING SPACES FROM COLUMN NAMES
+
+def rename_columns_to_standard(df):
+    for col in df.columns:
+        new_col = (
+            col.replace(".", "_").replace(" ", "_").replace("(", "_").replace(")", "")
+        )
+        new_col = new_col.lower()
+        df = df.withColumnRenamed(col, new_col)
+ 
+ #Check if there is no duplicated column names
+    if len(df.columns) != len(set(df.columns)):
+        need_to_check_columns: List[str] = []
+        item: str
+        for item, count in collections.Counter(df.columns).items():
+            if count > 1:
+                need_to_check_columns.append(item)
+        raise ValueError(
+            "Some columns have the same names as other columns "
+            "after renaming to snakecase. "
+            "Please check the columns' names "
+            f"which are similar to {need_to_check_columns} and then rename them."
+        )
+ 
+    return df
